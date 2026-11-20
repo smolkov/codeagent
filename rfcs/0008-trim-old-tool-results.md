@@ -166,7 +166,7 @@ they are; `spec/context.md` may add a real answer later.
   text there.
 - `readme.md`: the `[history]` keys under "Configuration", and the note on
   the token row of the session list.
-- `implementation.md`: the milestone "Context management" notes that RFC
+- `todo.md`: the milestone "Context management" notes that RFC
   0008 builds its history part.
 
 ## Testing
@@ -206,7 +206,7 @@ Each step leaves a working, tested state.
 3. **System prompt and spec**
    - Status: done
    - Files: `src/agent/system_prompt.md`, `spec/agent-loop.md`,
-     `spec/tools.md`, `spec/config.md`, `readme.md`, `implementation.md`
+     `spec/tools.md`, `spec/config.md`, `readme.md`, `todo.md`
    - Result: the model is told about placeholders; the spec describes the
      behaviour where it will be specified.
    - Tests: the existing prompt and loop tests keep passing.

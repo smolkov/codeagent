@@ -298,7 +298,7 @@ Tokens per day (in + out)
    - Tests: text output
 7. **Docs**
    - Status: done
-   - Files: `readme.md`, `todo.md`, `implementation.md`, this RFC
+   - Files: `readme.md`, `todo.md`, this RFC
    - Result: status `done`
 
 ## Alternatives

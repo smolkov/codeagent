@@ -2,9 +2,8 @@
 
 - RFC: 0003
 - Status: done
-- Milestone: the model picker of "TUI sessions and settings" (see
-  [`implementation.md`](../implementation.md)); part B of "Refactoring" in
-  [`todo.md`](../todo.md)
+- Milestone: the model picker of "TUI sessions and settings"; part B of
+  "Refactoring" in [`todo.md`](../todo.md)
 - Spec: [`spec/tui.md`](../spec/tui.md), "Layout", "Model picker", "Keys";
   [`spec/sessions.md`](../spec/sessions.md), "Persistence";
   [`spec/architecture.md`](../spec/architecture.md), "Protocol";
@@ -293,7 +292,7 @@ Written when the RFC is accepted.
    - Tests: Picker tests above.
 8. **Docs**
    - Status: done
-   - Files: `spec/`, `readme.md`, `implementation.md`, `todo.md`, `rfcs/readme.md`
+   - Files: `spec/`, `readme.md`, `todo.md`, `rfcs/readme.md`
    - Result: Spec changes above; refactoring items and the picker ticked; status
      `done`.
    - Tests: `cargo fmt`, `clippy`, `test`.

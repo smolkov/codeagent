@@ -123,7 +123,7 @@ files appear there as draft chapters (empty links).
 The book is configured in [`book.toml`](book.toml). Build it with
 `mdbook build spec` (output in `target/spec-book/`), or read it with live
 reload with `mdbook serve spec --open`. Links to files outside `spec/`
-(`AGENTS.md`, `implementation.md`) work in the repository, not in the book.
+(`AGENTS.md`) work in the repository, not in the book.
 
 When a spec file is added, renamed or removed, update this table and
 `SUMMARY.md` in the same change.

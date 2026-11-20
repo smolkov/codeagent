@@ -3,7 +3,7 @@
 - RFC: 0005
 - Status: done
 - Milestone: the session list of "TUI sessions and settings" (see
-  [`implementation.md`](../implementation.md))
+  [`todo.md`](../todo.md))
 - Spec: [`spec/tui.md`](../spec/tui.md), "Sessions", "Switching sessions",
   "Model picker", "Input editor", "Keys";
   [`spec/command.md`](../spec/command.md), "codeagent attach", "codeagent chat";
@@ -281,8 +281,7 @@ Written when the RFC is accepted.
    - Tests: search and keys; snapshots.
 7. **Docs**
    - Status: done
-   - Files: `spec/`, `readme.md`, `implementation.md`, `todo.md`,
-     `rfcs/readme.md`
+   - Files: `spec/`, `readme.md`, `todo.md`, `rfcs/readme.md`
    - Result: spec changes above; status `done`.
    - Tests: `cargo fmt`, `clippy`, `test`.
 

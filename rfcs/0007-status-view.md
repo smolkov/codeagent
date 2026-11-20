@@ -300,7 +300,7 @@ aligned as in the box. `/usage` prints only the "tokens" and "context" rows.
    - Tests: text output
 7. **Docs**
    - Status: done
-   - Files: `readme.md`, `todo.md`, `implementation.md`, this RFC
+   - Files: `readme.md`, `todo.md`, this RFC
    - Result: status `done`
 
 ## Alternatives

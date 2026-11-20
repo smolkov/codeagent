@@ -2,7 +2,7 @@
 
 - RFC: 0013
 - Status: done
-- Milestone: Commit in `implementation.md`
+- Milestone: Commit in [`todo.md`](../todo.md)
 - Spec: `command.md` "codeagent commit", `config.md` "Commit", `commit.md` (new),
   `architecture.md` "Commit"
 
@@ -216,8 +216,7 @@ standard output.
   commit` is `default_model`.
 - `spec/architecture.md`: `src/commit/` built, `commit.md` no longer
   planned.
-- `implementation.md` and `todo.md`: the Commit milestone, with `/commit`
-  left open.
+- `todo.md`: the Commit milestone, with `/commit` left open.
 
 ## Testing
 
@@ -265,7 +264,7 @@ standard output.
 5. **Command and docs**
    - Status: done
    - Files: `src/command/commit.rs`, `tests/commit.rs`, the spec files,
-     `readme.md`, `implementation.md`, `todo.md`
+     `readme.md`, `todo.md`
    - Result: `codeagent commit` works as described.
    - Tests: the command cases above.
 

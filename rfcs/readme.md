@@ -10,9 +10,8 @@ predictable for everyone involved.
 | File | Says |
 |------|------|
 | [`spec/`](../spec/readme.md) | What `codeagent` does. Source of truth for behaviour. |
-| [`implementation.md`](../implementation.md) | How it is built, and in which order (milestones). |
 | `rfcs/` | How one step is built, and which decisions it makes. |
-| [`todo.md`](../todo.md) | What is done and what is left. |
+| [`todo.md`](../todo.md) | What is done and what is left, with milestones and their order. |
 
 An RFC never overrides the spec. A decision about behaviour is written into
 the spec file of its topic, in the same change as the RFC or when the RFC is
@@ -20,7 +19,7 @@ accepted; the RFC records why.
 
 ## When to write one
 
-- Before a milestone of `implementation.md`, or a large part of one.
+- Before a milestone, or a large part of one.
 - For a change of behaviour that touches several spec files, the protocol
   or the saved session format.
 - For a new dependency, or a choice between designs with real trade-offs.
@@ -39,8 +38,7 @@ wording in the spec. The plan the agent writes before each task (see
 3. The user accepts it: status `accepted`. Changes after that need a new
    approval and a note in the RFC.
 4. Build it, step by step as its implementation plan says. When done,
-   status `done`, and the milestone in `implementation.md` and `todo.md`
-   are updated.
+   status `done`, and the milestone in `todo.md` is updated.
 
 An RFC that will not be built gets `rejected` or `replaced by NNNN`, and
 stays in the directory with its reason.
@@ -62,7 +60,7 @@ stays in the directory with its reason.
 
 - RFC: NNNN
 - Status: draft
-- Milestone: name in implementation.md, if any
+- Milestone: name in [`todo.md`](../todo.md), if any
 - Spec: spec files and sections it is based on or changes
 
 ## Summary

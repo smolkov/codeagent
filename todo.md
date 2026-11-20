@@ -1,6 +1,6 @@
 # Todo
 
-Milestones and their order: [`implementation.md`](implementation.md).
+Milestones and their order: the "Next milestones" part below.
 
 ## Foundation
 

@@ -5,8 +5,7 @@
 - Milestone: none; it cleans the ground the "Context management" and
   "Commit" milestones build on
 - Spec: [`spec/command.md`](../spec/command.md) (no change of behaviour);
-  [`spec/architecture.md`](../spec/architecture.md), "Modules";
-  [`implementation.md`](../implementation.md), "Modules"
+  [`spec/architecture.md`](../spec/architecture.md), "Modules"
 
 ## Summary
 
@@ -180,7 +179,8 @@ impl Execute for Kill {
   - the file with its `impl Execute`.
 
   A missing arm does not compile, and neither does a variant whose type does not
-  implement `Execute`. `implementation.md` gets this as a short checklist.
+  implement `Execute`. The RFC's module list above gets this as a short
+  checklist.
 
 ### Context
 
@@ -271,10 +271,11 @@ Nothing about what `run` does changes: the same options, messages, exit codes
 ## Spec changes
 
 `spec/command.md` lists the commands and their behaviour, and all of it stays.
-`spec/architecture.md`, "Modules" says "one file per command with its argument
-struct and `run`", and that stays true.
+`spec/architecture.md` says "one file per command, with its arguments and
+`run`", and that stays true.
 
-`implementation.md`, "Modules" changes:
+The module list in this RFC changes the one in
+[`spec/architecture.md`](../spec/architecture.md), "Project tree":
 
 - **`cli`:** "the `Command` enum and `Command::execute`, the one dispatch".
 - **`command`:** "one file per command with its argument struct and `impl
@@ -326,7 +327,7 @@ Each step leaves a working, tested state.
    - Status: done
    - Files: `src/command/mod.rs` (`Execute`, `Context`), `src/cli.rs`
      (`execute`), `src/main.rs`, every command file, `src/tui/mod.rs`,
-     `src/command/chat/*.rs`, `implementation.md`
+     `src/command/chat/*.rs`, `todo.md`
    - Result: one `match`; every command implements `Execute` and takes
      `&Context`; the four `LoadOptions` copies use `Context::load_options`.
      This touches every command file once, for both changes.

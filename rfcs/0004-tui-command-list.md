@@ -3,7 +3,7 @@
 - RFC: 0004
 - Status: done
 - Milestone: the command list of "TUI sessions and settings" (see
-  [`implementation.md`](../implementation.md))
+  [`todo.md`](../todo.md))
 - Spec: [`spec/tui.md`](../spec/tui.md), "Input editor", "Command list", "Keys"
 
 ## Summary
@@ -159,8 +159,7 @@ those tests move to that case.
 - `spec/tui.md`, "Input editor" or "Layout": the rule that a box the user can
   open has a command.
 - `readme.md`: the list in the keys and commands.
-- `todo.md`, `implementation.md`: the command list done, argument completion
-  open.
+- `todo.md`: the command list done, argument completion open.
 
 ## Testing
 
@@ -213,7 +212,7 @@ A run of the real binary in tmux against an isolated server: `/`, search, `Tab`,
    - Tests: frames.
 4. **Docs and the real binary**
    - Status: done
-   - Files: `spec/tui.md`, `readme.md`, `todo.md`, `implementation.md`, this RFC
+   - Files: `spec/tui.md`, `readme.md`, `todo.md`, this RFC
    - Result: status `done`.
    - Tests: tmux run; `cargo fmt`, `clippy -D warnings`, `cargo test`.
 

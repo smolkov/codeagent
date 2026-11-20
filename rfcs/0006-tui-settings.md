@@ -3,7 +3,7 @@
 - RFC: 0006
 - Status: done
 - Milestone: the `[tui]` settings of "TUI sessions and settings" (see
-  [`implementation.md`](../implementation.md))
+  [`todo.md`](../todo.md))
 - Spec: [`spec/tui.md`](../spec/tui.md), "Input editor", "Appearance";
   [`spec/config.md`](../spec/config.md), "TUI", "Themes", "Reloading"
 
@@ -443,8 +443,7 @@ Written when the RFC is accepted.
    - Tests: box and `App` tests; snapshots.
 7. **Docs**
    - Status: done
-   - Files: `spec/`, `readme.md`, `implementation.md`, `todo.md`,
-     `rfcs/readme.md`
+   - Files: `spec/`, `readme.md`, `todo.md`, `rfcs/readme.md`
    - Result: spec changes above; status `done`.
    - Tests: `cargo fmt`, `clippy`, `test`.
 

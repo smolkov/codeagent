@@ -2,9 +2,8 @@
 
 How `codeagent` is divided into parts, what each part owns, and how the parts talk
 to each other. This file describes structure and data flow. Behaviour is
-described in the topic files it links to, and the code layout (modules,
-crates, dependencies) in [`implementation.md`](../implementation.md). If this
-file and a topic file disagree, the topic file wins.
+described in the topic files it links to. If this file and a topic file
+disagree, the topic file wins.
 
 Statements marked **(assumption)** need a decision from the user.
 
@@ -86,10 +85,8 @@ Consequences:
 ## Project tree
 
 Where the components live in the repository. Entries marked *planned* do not
-exist yet; they are added by the milestones in
-[`implementation.md`](../implementation.md), which also lists each module's
-content. When files are added, moved or removed, this tree is updated in the
-same change.
+exist yet; they are added when the work on them starts. When files are added,
+moved or removed, this tree is updated in the same change.
 
 ```
 codeagent/
@@ -97,7 +94,6 @@ codeagent/
 ├── clippy.toml                 lint settings (never-crash rules)
 ├── readme.md                   user-facing overview and status
 ├── AGENTS.md                   rules for the coding agent on this repository
-├── implementation.md           modules, dependencies, milestones
 ├── todo.md                     progress per milestone
 │
 ├── spec/                       the specification (this book)

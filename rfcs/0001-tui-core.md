@@ -2,7 +2,7 @@
 
 - RFC: 0001
 - Status: done
-- Milestone: TUI core (see [`implementation.md`](../implementation.md))
+- Milestone: TUI core (see [`todo.md`](../todo.md))
 - Spec: [`spec/tui.md`](../spec/tui.md), [`spec/sessions.md`](../spec/sessions.md),
   [`spec/command.md`](../spec/command.md) (`codeagent`, `codeagent new`, `codeagent attach`),
   [`spec/config.md`](../spec/config.md) ("TUI")
@@ -272,7 +272,7 @@ To approve with this RFC (latest versions at the time of the change):
   sessions.
 - `spec/architecture.md`: `src/tui/` tree instead of "planned";
   `client::Connection`.
-- `implementation.md`: status of TUI core; `todo.md`: tasks done and moved.
+- `todo.md`: status of TUI core and the tasks done and moved.
 - `readme.md`: `codeagent`, `codeagent new`, `codeagent attach` and the TUI keys.
 
 ## Testing
@@ -372,7 +372,7 @@ work can stop after any step.
 10. **Docs**
    - Status: done (the manual run in kitty or foot stays open in `todo.md`)
    - Files: `spec/tui.md`, `spec/command.md`, `spec/architecture.md`,
-     `implementation.md`, `todo.md`, `readme.md`, `rfcs/readme.md`
+     `todo.md`, `readme.md`, `rfcs/readme.md`
    - Result: Spec changes listed above; milestone status; RFC status `done`.
    - Tests: Full test run; manual run in a real terminal (kitty or foot, and
      one without keyboard enhancement).

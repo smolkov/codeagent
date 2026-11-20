@@ -2,7 +2,7 @@
 
 - RFC: 0002
 - Status: done
-- Milestone: TUI core (see [`implementation.md`](../implementation.md)),
+- Milestone: TUI core (see [`todo.md`](../todo.md)),
   the entry point part of [RFC 0001](0001-tui-core.md)
 - Spec: [`spec/command.md`](../spec/command.md), "codeagent" and "codeagent new";
   [`spec/tui.md`](../spec/tui.md); [`spec/sessions.md`](../spec/sessions.md),
