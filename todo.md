@@ -387,6 +387,8 @@ Milestones and their order: [`implementation.md`](implementation.md).
 - [ ] Commit: the TUI `/commit` dialog (`codeagent commit` is built, RFC 0013)
 - [ ] Context management: trimming of old tool results is built (RFC 0008,
       in steps by RFC 0028); the rest needs `spec/context.md`
+  - [ ] Project instructions: `AGENTS.md` and a user file in the system
+        prompt (RFC 0038, draft)
 - [x] Fewer tokens (RFC 0028): cached input counted, stable prefix and
       Anthropic prompt cache, trimming in steps, clean command output,
       unchanged re-reads, `ci/bench.sh`
@@ -405,6 +407,9 @@ Milestones and their order: [`implementation.md`](implementation.md).
         macOS files tried on real machines; then delete it.
   - [x] First crates.io publish by hand, then trusted publishing and the
         `crates-io` environment.
+
+- [ ] Automatic updates: daily check in the server, `[update] auto`
+      (`check` by default), `codeagent update` (RFC 0039, draft)
 
 ## Security (RFC 0035)
 

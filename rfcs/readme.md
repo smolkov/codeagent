@@ -159,3 +159,5 @@ Sections that do not apply may be left out.
 | [0035](0035-security-review-two.md) | Second security review: threat model, terminal output, imports, child environment | done |
 | [0036](0036-agents.md) | Agents | draft |
 | [0037](0037-dependency-advisories.md) | Dependency advisories | done |
+| [0038](0038-project-instructions.md) | Project instructions | draft |
+| [0039](0039-automatic-updates.md) | Automatic updates | draft |
