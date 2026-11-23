@@ -402,7 +402,7 @@ old     ~/ws/old        local/qwen        saved    3d
 
 | Option | Meaning |
 |--------|---------|
-| `--json` | Print a JSON array instead of the table: per session `name`, `workspace` (absolute), `model`, `state`, `created` (seconds since 1970), `queued` (messages waiting for the turn), `question` (`id`, `kind`, `summary`, or `null`), `input_tokens`, `output_tokens` and `cache_read_tokens` (used so far, see [`tui.md`](tui.md), "Token counters"), and `tmp`, the scratch directory (see [`sessions.md`](sessions.md), "Scratch directory"), or `null` when it does not exist. |
+| `--json` | Print a JSON array instead of the table: per session `name`, `workspace` (absolute), `model`, `state`, `created` (seconds since 1970), `queued` (messages waiting for the turn), `question` (`id`, `kind`, `summary`, or `null`), `input_tokens`, `output_tokens` and `cache_read_tokens` (used so far, see [`tui-status.md`](tui-status.md), "Token counters"), and `tmp`, the scratch directory (see [`sessions.md`](sessions.md), "Scratch directory"), or `null` when it does not exist. |
 
 ## codeagent kill
 
@@ -523,14 +523,14 @@ The test passes now.
   current one, as `default_model`, as in the TUI), `/usage` prints the tokens used
   (`tokens: in 45.1k, out 3.2k; context 12.3k`), `/status [NAME]` prints the
   status and statistics of the attached session or of session `NAME` as the
-  TUI's status box shows them (see [`tui.md`](tui.md), "Status box"), as text,
+  TUI's status box shows them (see [`tui-status.md`](tui-status.md), "Status box"), as text,
   `/stats [7d|30d|all]` prints the statistics over all sessions of the TUI's
   Global tab as text: Totals, Models, and one line per day with its tokens and
-  a bar (see [`tui.md`](tui.md), "Global tab"),
+  a bar (see [`tui-status.md`](tui-status.md), "Global tab"),
   `/lsp` lists the language servers of the server (name, root, state, the
   sessions that use them, and for a failed one its last stderr line),
   `/lsp restart NAME` and `/lsp stop NAME` restart or stop one (see
-  [`tui.md`](tui.md), "Language servers"),
+  [`tui-boxes.md`](tui-boxes.md), "Language servers"),
   `/skills` prints the skills found for the session's workspace, one per
   line: `*` before an active one, its name, its directory, and its
   description, `shadowed by …`, `changed on disk; …` or `not found any

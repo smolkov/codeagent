@@ -1,4 +1,4 @@
-//! The filter of the session list (see `spec/tui.md`, "Sessions"): words
+//! The filter of the session list (see `spec/tui-sessions.md`, "Sessions"): words
 //! that each must match a session, by text or by the time since its last
 //! use.
 

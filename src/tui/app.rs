@@ -21,7 +21,7 @@ use indexmap::IndexMap;
 use super::activity::Activity;
 use super::clipboard::Clip;
 use super::commands::{self, Command};
-use super::conversation::{Conversation, Expansion, Kind};
+use super::conversation::{Choices, Conversation, Kind};
 use super::details::Details;
 use super::editor::{Browse, Edit, Editor};
 use super::keys::{self, Action, Focus};
@@ -256,7 +256,7 @@ enum Saving {
 }
 
 /// What the TUI keeps of a session while it shows another one (see
-/// `spec/tui.md`, "Switching sessions"). The conversation is built again from
+/// `spec/tui-sessions.md`, "Switching sessions"). The conversation is built again from
 /// the log.
 #[derive(Debug, Clone)]
 struct View {
@@ -264,7 +264,7 @@ struct View {
     follow: bool,
     focus: Focus,
     selected: Option<usize>,
-    expanded: HashMap<String, Expansion>,
+    expanded: Choices,
     queued: Vec<String>,
     editor: Editor,
 }
@@ -276,7 +276,7 @@ impl Default for View {
             follow: true,
             focus: Focus::Input,
             selected: None,
-            expanded: HashMap::new(),
+            expanded: Choices::default(),
             queued: Vec::new(),
             editor: Editor::default(),
         }
@@ -418,11 +418,12 @@ pub struct App {
 
 impl App {
     pub fn new(settings: Settings, attachment: Attachment, now: Instant) -> App {
-        let conversation = Conversation::new(
+        let mut conversation = Conversation::new(
             settings.look,
             settings.tool_output_lines,
             settings.tui.tool_preview,
         );
+        conversation.set_grouping(grouping(&settings.tui));
         let mut app = App {
             settings,
             session: attachment.session.clone(),
@@ -893,6 +894,7 @@ impl App {
         if changed {
             self.conversation.reconfigure(look, limit, tui.tool_preview);
         }
+        self.conversation.set_grouping(grouping(&tui));
         let mut effects = Vec::new();
         if tui.mouse != self.settings.tui.mouse {
             effects.push(Effect::Mouse(tui.mouse));
@@ -2440,6 +2442,7 @@ impl App {
                 if self.selected.is_none() {
                     self.selected = self.conversation.entries.len().checked_sub(1);
                 }
+                self.selected = self.selected.map(|s| self.conversation.shown_entry(s));
                 self.reveal = self.selected;
                 Focus::Conversation
             }
@@ -2457,7 +2460,10 @@ impl App {
                 }
             }
             Focus::Conversation => {
-                self.selected = self.selected.map(|s| s.saturating_sub(1));
+                self.selected = self.selected.map(|s| {
+                    self.conversation
+                        .previous_shown(self.conversation.shown_entry(s))
+                });
                 self.reveal = self.selected;
             }
         }
@@ -2473,8 +2479,10 @@ impl App {
                 }
             }
             Focus::Conversation => {
-                let last = self.conversation.entries.len().saturating_sub(1);
-                self.selected = self.selected.map(|s| (s + 1).min(last));
+                self.selected = self.selected.map(|s| {
+                    self.conversation
+                        .next_shown(self.conversation.shown_entry(s))
+                });
                 self.reveal = self.selected;
             }
         }
@@ -2904,4 +2912,9 @@ pub fn dropped_image(text: &str) -> Option<String> {
         .iter()
         .any(|ext| lower.ends_with(ext))
         .then_some(path)
+}
+
+/// `tui.group_tools_min` when `tui.group_tools` is on (RFC 0043).
+fn grouping(tui: &Tui) -> Option<usize> {
+    tui.group_tools.then_some(usize::from(tui.group_tools_min))
 }

@@ -1,4 +1,4 @@
-//! Copying and the details view (see `spec/tui.md`, "Copy" and "Details
+//! Copying and the details view (see `spec/tui-conversation.md`, "Copy" and "Details
 //! view"): the copy keys and commands, the mouse selection, clicks on calls,
 //! and the keys of the details view.
 
@@ -292,6 +292,10 @@ impl App {
                     _ => 1,
                 };
                 self.last_click = Some((self.now, mouse.column, mouse.row, clicks));
+                if clicks > 1 && surface == Surface::Conversation && self.group_at(at.0) {
+                    // On a group's line a double click acts as one click.
+                    return vec![Effect::Redraw];
+                }
                 if clicks > 1
                     && surface == Surface::Conversation
                     && let Some(entry) = self.summary_at(at.0)
@@ -377,7 +381,16 @@ impl App {
     fn summary_at(&self, row: usize) -> Option<usize> {
         let found = self.conversation.rows(row, 1).first().copied()?;
         let entry = found.entry?;
-        (found.first && self.conversation.call(entry).is_some()).then_some(entry)
+        let summary = found.offset == self.conversation.summary_offset(entry)
+            && (found.first || self.conversation.is_group(entry));
+        (summary && self.conversation.call(entry).is_some()).then_some(entry)
+    }
+
+    /// Whether `row` is the line of a group of calls (RFC 0043).
+    fn group_at(&self, row: usize) -> bool {
+        self.conversation.rows(row, 1).first().is_some_and(|found| {
+            found.first && found.entry.is_some_and(|e| self.conversation.is_group(e))
+        })
     }
 
     /// A click on a row of the conversation: a call's summary opens its
@@ -390,10 +403,21 @@ impl App {
         let Some(entry) = found.entry else {
             return;
         };
+        let (first, offset) = (found.first, found.offset);
+        let more = found.source.is_some_and(|s| s.skip);
         if self.conversation.call(entry).is_none() {
             return;
         }
-        if found.first {
+        if first && self.conversation.toggle_group(entry) {
+            self.reveal = Some(entry);
+            if self.focus == Focus::Conversation {
+                self.selected = Some(entry);
+            }
+            return;
+        }
+        let summary = offset == self.conversation.summary_offset(entry)
+            && (first || self.conversation.is_group(entry));
+        if summary {
             if let Some(before) = self.conversation.click(entry) {
                 self.last_call_click = Some((entry, before));
                 self.reveal = Some(entry);
@@ -401,7 +425,7 @@ impl App {
             if self.focus == Focus::Conversation {
                 self.selected = Some(entry);
             }
-        } else if found.source.is_some_and(|s| s.skip) {
+        } else if more {
             self.open_details(entry);
         }
     }

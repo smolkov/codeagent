@@ -1,0 +1,16 @@
+---
+source: src/tui/tests/clicks.rs
+expression: closed
+---
+> check                                                                         
+                                                                                
+▸ Ran 5 commands                                                          ✓ 5 ok
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+────────────────────────────────────────────────────────────────────────────────
+>                                                                               
+────────────────────────────────────────────────────────────────────────────────
+  idle · /help · Ctrl-D detach                                                  
+  project · ~/ws/project · anthropic/sonnet · 1/1 · 0/200k

@@ -778,6 +778,8 @@ symbols           = "auto"      # auto | unicode | ascii
 mouse             = true        # capture the mouse: wheel, drag to copy, click; false keeps the terminal's selection
 tool_output_lines = 20          # lines of tool output shown before "… N more lines"; 0 = no limit
 tool_preview      = "changes"   # changes | all | none: what finished tool calls show
+group_tools       = true        # finished calls of one tool in a row as one line: "Ran 5 commands"
+group_tools_min   = 2           # fewest calls that form a group, 2–100
 clipboard         = "auto"      # auto | osc52 | command | off: how copied text reaches the clipboard
 syntax_highlight  = true        # colour code blocks, diffs, new files and commands by their language
 timestamps        = false       # show the time of each user message and answer
@@ -790,16 +792,18 @@ activity          = "playful"   # playful | plain | off: the line while the sess
 |-----|---------|
 | `theme` | Colour theme, see [Themes](#themes). |
 | `symbols` | `auto` uses Unicode symbols (`✓ ✗ ▸ ▾`) when the locale is UTF-8, otherwise ASCII (`+ x > v`). |
-| `mouse` | When `true`, the mouse wheel scrolls the conversation, a drag selects and copies text, and a click on a tool call expands it ([`tui.md`](tui.md), "Copy"); the terminal's own selection then needs `Shift` held (in most terminals). |
+| `mouse` | When `true`, the mouse wheel scrolls the conversation, a drag selects and copies text, and a click on a tool call expands it ([`tui-conversation.md`](tui-conversation.md), "Copy"); the terminal's own selection then needs `Shift` held (in most terminals). |
 | `tool_output_lines` | Maximum lines of a tool's output shown in an expanded entry or a preview before it is cut. The full text is shown with `Enter` on the call, and in the details view (`o`). |
-| `tool_preview` | What finished tool calls show below their summary ([`tui.md`](tui.md), "Conversation entries"): `changes` the diff of edits and writes, the last lines of commands and the error of failed calls; `all` every call expanded; `none` one line each. Calls waiting for permission are always expanded. |
+| `tool_preview` | What finished tool calls show below their summary ([`tui-conversation.md`](tui-conversation.md), "Conversation entries"): `changes` the diff of edits and writes, the last lines of commands and the error of failed calls; `all` every call expanded; `none` one line each. Calls waiting for permission are always expanded. |
+| `group_tools` | Show finished calls of one tool that follow each other as one line, `▸ Ran 5 commands`, which a click or `Enter` opens ([`tui-conversation.md`](tui-conversation.md), "Conversation entries", RFC 0043). `false` shows each call on its own. |
+| `group_tools_min` | The fewest calls that form a group, 2–100. |
 | `expand_tool_calls` | Deprecated: `true` reads as `tool_preview = "all"`; `tool_preview` wins when both are set. |
-| `clipboard` | How copied text reaches the clipboard ([`tui.md`](tui.md), "Copy"): `auto` the terminal's OSC 52 sequence and, when the session is local, `wl-copy`, `xclip`, `xsel` or `pbcopy`; `osc52` only the sequence; `command` only the command; `off` nothing. Also whether `Ctrl-V` may read images from it ([`tui.md`](tui.md), "Images"): `auto` when local, `command` always, `osc52` and `off` never. |
-| `syntax_highlight` | Colour code by its language ([`tui.md`](tui.md), "Syntax highlighting"); `false` for slow terminals or plain output. |
+| `clipboard` | How copied text reaches the clipboard ([`tui-conversation.md`](tui-conversation.md), "Copy"): `auto` the terminal's OSC 52 sequence and, when the session is local, `wl-copy`, `xclip`, `xsel` or `pbcopy`; `osc52` only the sequence; `command` only the command; `off` nothing. Also whether `Ctrl-V` may read images from it ([`tui-conversation.md`](tui-conversation.md), "Images"): `auto` when local, `command` always, `osc52` and `off` never. |
+| `syntax_highlight` | Colour code by its language ([`tui-settings.md`](tui-settings.md), "Syntax highlighting"); `false` for slow terminals or plain output. |
 | `timestamps` | Prefix entries with `HH:MM`. |
 | `scroll_lines` | Mouse-wheel scroll step. |
 | `max_fps` | Upper limit for redraws per second. |
-| `activity` | The activity line above the input while the session works ([`tui.md`](tui.md), "Activity line"). `playful`: a playful verb per turn with a shimmer; `plain`: `Thinking…` and `Writing…`; `off`: no line (tool call spinners still move). |
+| `activity` | The activity line above the input while the session works ([`tui-conversation.md`](tui-conversation.md), "Activity line"). `playful`: a playful verb per turn with a shimmer; `plain`: `Thinking…` and `Writing…`; `off`: no line (tool call spinners still move). |
 
 ### Themes
 
@@ -919,7 +923,7 @@ at once to the running TUI. An invalid change keeps the previous settings and
 shows the error in the status line.
 
 `codeagent` writes the user file only from `/settings` and `/theme` (see
-[`tui.md`](tui.md), "Settings"), which set or remove keys of `[tui]`, and from
+[`tui-settings.md`](tui-settings.md), "Settings"), which set or remove keys of `[tui]`, and from
 the model picker's default tick, `/model … --default` (TUI and `codeagent chat`) and
 `codeagent models --set-default`, which set `default_model` (RFC 0021). It keeps the
 rest of the file, comments and order included; it checks the new text as
@@ -1009,7 +1013,7 @@ or shown in the TUI.
 | `context_window`    | yes      | Maximum context size in tokens; used for the header gauge and history truncation. |
 | `max_output_tokens` | no       | Maximum tokens per answer. Default: provider default. |
 | `temperature`       | no       | Sampling temperature. Default: provider default. |
-| `images`            | no       | `true` or `false`: the model reads images in messages (RFC 0034, [`tui.md`](tui.md), "Images"). Default `true` for `anthropic` and `gemini`, `false` for `openai-compatible`, where many local models read only text. A message with images to a model without is refused. A model set to `true` that refuses an image gets text notes instead for the rest of the session ([`agent-loop.md`](agent-loop.md), "Errors"). |
+| `images`            | no       | `true` or `false`: the model reads images in messages (RFC 0034, [`tui-conversation.md`](tui-conversation.md), "Images"). Default `true` for `anthropic` and `gemini`, `false` for `openai-compatible`, where many local models read only text. A message with images to a model without is refused. A model set to `true` that refuses an image gets text notes instead for the rest of the session ([`agent-loop.md`](agent-loop.md), "Errors"). |
 
 ### Model references
 
@@ -1035,7 +1039,7 @@ It is an error when:
 - a provider or model name is empty or contains `/`;
 - a model has no `id` or `context_window`, or a number is out of range:
   `context_window` and `max_output_tokens` at least 1, `timeout_s` 1–86400,
-  `max_retries` 0–100, `temperature` 0–2, `tui.max_fps` 1–120,
+  `max_retries` 0–100, `temperature` 0–2, `tui.max_fps` 1–120, `tui.group_tools_min` 2–100,
   `limits.max_requests` and `limits.max_tool_calls` 1–10000;
 - `commit.model`, `tui.theme`, `CODEAGENT_MODEL` or `CODEAGENT_THEME` names something
   that is not defined;

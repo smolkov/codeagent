@@ -86,23 +86,22 @@ New crates and why (omit if none).
 
 ## Spec changes
 
-Which spec files change and how.
-
-## Testing
-
-What is tested and how.
+One line per spec file: the file, the section, what changes in a few
+words. The design is not restated here; the spec text is written when
+the RFC is built.
 
 ## Implementation plan
 
 Steps in build order. Each step leaves a working, tested state. Its
 status is `todo`, `in progress` or `done`; it is updated in the same change
-that builds the step, and a step is `done` only when its tests pass.
+that builds the step, and a step is `done` only when its tests pass. The
+tests of each step are named in it; there is no separate testing section.
 
 1. **Name**
    - Status: todo
    - Files: Files created or changed
    - Result: What works after it
-   - Tests: What is tested
+   - Tests: What is tested, and how
 
 ## Alternatives
 
@@ -114,6 +113,10 @@ Decisions still needed from the user.
 ```
 
 Write like the spec: short sentences, plain words, no numbers in headings.
+Aim for about 150 lines: an RFC is read in full by whoever builds it, so
+every line is paid for again in each session that builds a step. Say a
+thing once, in the section it belongs to; leave out what the spec already
+says and point to it instead.
 Sections that do not apply may be left out.
 
 ## Index
@@ -159,3 +162,6 @@ Sections that do not apply may be left out.
 | [0037](0037-dependency-advisories.md) | Dependency advisories | done |
 | [0038](0038-project-instructions.md) | Project instructions | draft |
 | [0039](0039-automatic-updates.md) | Automatic updates | draft |
+| [0041](0041-cheaper-tools.md) | Cheap tools: tree listings, match ranges, symbol outlines | draft |
+| [0042](0042-model-loads-skills.md) | The model turns on skills | draft |
+| [0043](0043-grouped-tool-calls.md) | Grouped tool calls | done |

@@ -101,6 +101,7 @@ codeagent/
 │   ├── readme.md               introduction, terms, index, open questions
 │   ├── architecture.md         this file
 │   ├── command.md, tui.md, sessions.md, commit.md
+│   ├── tui-*.md                the TUI's topics: sessions, conversation, questions, …
 │   ├── config.md, providers.md, tools.md, agent-loop.md
 │   └── context.md              planned
 │
@@ -332,7 +333,7 @@ once.
 
 On `attach`, the session first sends its event log, then live events, so a
 client that attaches late shows the same conversation as one that was there
-from the start (see [`tui.md`](tui.md), "Switching sessions"). The log is
+from the start (see [`tui-sessions.md`](tui-sessions.md), "Switching sessions"). The log is
 kept in memory, whole, while the session runs, and on disk without the
 streamed pieces; a resumed session replays it from disk.
 

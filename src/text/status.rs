@@ -1,4 +1,4 @@
-//! The status of a session as sections of rows (see `spec/tui.md`, "Status
+//! The status of a session as sections of rows (see `spec/tui-status.md`, "Status
 //! box"): the TUI draws them in a box, `codeagent chat` prints them as text.
 
 use crate::agent::{State, date_of};

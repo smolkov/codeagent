@@ -1,4 +1,4 @@
-//! Syntax highlighting of code (see `spec/tui.md`, "Syntax highlighting"):
+//! Syntax highlighting of code (see `spec/tui-settings.md`, "Syntax highlighting"):
 //! code blocks, diffs, new files and commands. The grammars and themes of
 //! `syntect` are loaded once, in the background; until they are there, code
 //! is shown in its plain style. Results are cached, and a text that grows

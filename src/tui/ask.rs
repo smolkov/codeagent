@@ -1,6 +1,6 @@
 //! The box for a question from the model (`ask_user`): which question is
 //! shown, what is chosen and typed, and the keys that answer (see
-//! `spec/tui.md`, "Questions from the model").
+//! `spec/tui-questions.md`, "Questions from the model").
 
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 

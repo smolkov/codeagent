@@ -13,15 +13,21 @@ only when asked.
 
 ## Ground truth
 
-Read these first, every time; they change:
+Read these first, every time; they change. Read the sections named, not
+whole files (`grep -n '^#' FILE` lists them):
 
 | File | What it gives you |
 |------|-------------------|
-| `spec/security.md` | Assets, attackers, entry points and their guards, accepted risks, the checklist for new features, the findings of past reviews. |
+| `spec/security.md` | Assets, attackers, entry points and their guards, the checklist for new features. "Accepted risks" and "Findings" are the record of all past reviews: what was found, fixed or accepted. Do not report a finding again that is recorded there as accepted or closed, unless something changed. |
 | `spec/config.md`, "Permissions", "Built-in rules", "Project files", "run_command", "Sandbox" | What the permission engine promises. |
 | `spec/tools.md`, "Paths", "Permissions", "run_command" | What each tool may touch. |
 | `spec/command.md`, "Terminal output" | What may reach a terminal. |
-| `rfcs/0010-security-hardening.md`, `rfcs/0030-hide-secrets-from-the-model.md`, `rfcs/0035-security-review-two.md` | Earlier reviews: what was found, fixed, accepted, and why. Do not report a finding again that is recorded as accepted, unless something changed. |
+
+The review RFCs (`rfcs/0010-security-hardening.md`,
+`rfcs/0030-hide-secrets-from-the-model.md`,
+`rfcs/0035-security-review-two.md`) hold the reasons behind
+each row. Do not read them whole; open one only for the details of a
+specific finding you need (`grep -n` the finding's text or number).
 
 ## Attackers to think as
 
@@ -81,7 +87,8 @@ allows everything.
 - **An RFC** in `rfcs/` from the template in `rfcs/readme.md`, status
   `draft`, when the fixes change behaviour: Summary, Motivation (with the
   findings), Scope, Design (mark open choices **(proposal)**), Spec
-  changes, Testing, Implementation plan (high findings first), Alternatives,
+  changes, Implementation plan (high findings first, each step with its
+  tests), Alternatives,
   Open questions. Add it to the index. Write like the spec: short
   sentences, plain words, no numbers in headings.
 - **When building a fix:**

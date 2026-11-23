@@ -1,5 +1,5 @@
 //! The prompt bar: an open permission or limit question and the keys that
-//! answer it (see `spec/tui.md`, "Permission prompts", "Limit prompt").
+//! answer it (see `spec/tui-questions.md`, "Permission prompts", "Limit prompt").
 
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 

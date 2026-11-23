@@ -1,4 +1,4 @@
-//! A question from the model (see `spec/tui.md`, "Questions from the
+//! A question from the model (see `spec/tui-questions.md`, "Questions from the
 //! model"), at the bottom of the screen in the place of the input (RFC
 //! 0022): context, the question, its options and the text row; after
 //! several questions, the review page.

@@ -1,4 +1,4 @@
-//! The status box (see `spec/tui.md`, "Status box"): two tabs in the title;
+//! The status box (see `spec/tui-status.md`, "Status box"): two tabs in the title;
 //! on the Session tab the sections of `text::status`, on the Global tab those
 //! of `text::global` and the chart of tokens per day. Labels are dimmed and
 //! warnings marked; the tab scrolls when the screen is too small.

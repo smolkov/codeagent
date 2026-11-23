@@ -1,4 +1,4 @@
-//! Statistics over all sessions as rows (see `spec/tui.md`, "Global tab"):
+//! Statistics over all sessions as rows (see `spec/tui-status.md`, "Global tab"):
 //! the Totals section and the Models table for the status box, and the
 //! whole answer as text for `codeagent chat`.
 

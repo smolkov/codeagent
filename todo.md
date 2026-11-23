@@ -410,6 +410,10 @@ Milestones and their order: the "Next milestones" part below.
 
 - [ ] Automatic updates: daily check in the server, `[update] auto`
       (`check` by default), `codeagent update` (RFC 0039, draft)
+- [ ] The model turns on skills: `use_skill`, `[skills] model` (RFC 0042,
+      draft)
+- [x] Grouped tool calls in the TUI: `Ran 5 commands`, `tui.group_tools`
+      (RFC 0043)
 
 ## Security (RFC 0035)
 

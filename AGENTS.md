@@ -8,7 +8,7 @@
 |--------------------------|----------------------------------------------------------------|
 | `spec/`                  | Source of truth for behaviour, one file per topic.Keep in sync with the code.|
 | `spec/readme.md`         | Start of the specification: purpose, goals, terms; it is the source of truth for `codeagent`. |
-| `rfcs/`                  | Proposals for a change before it is built, one file each; process, template, statuses and index in `rfcs/readme.md`. |
+| `rfcs/`                  | Proposals for a change before it is built, one file each; process, template, statuses and index in `rfcs/readme.md`. A `done` RFC is history, not a source of truth. |
 | `readme.md`              | User documentation.                                            |
 | `todo.md`                | Tasks and their status.                                        |
 
@@ -19,8 +19,18 @@
   ask the user to approve it. Build only after the approval, and only what
   the plan says; a change of the plan needs a new approval. Questions and
   read-only investigation need no plan.
-- Re-read the spec files of the task (index: `spec/readme.md`) before starting a task ("reload spec"); the user may have
-  changed it since the last read. Implement what it says.
+- Re-read the spec sections of the task before starting it ("reload
+  spec"); the user may have changed them since the last read. Find the
+  file in the index (`spec/readme.md`), list its headings
+  (`grep -n '^#' spec/FILE.md`) and read only the sections the task
+  touches, not whole files. Implement what they say.
+- Keep spec files and test files small enough to read in parts: a file
+  that grows past about 800 lines is split by topic (as the
+  `spec/tui-*.md` files and the modules of `src/tui/tests/`).
+- The spec is the source of truth, not the RFCs. Read an RFC only when the
+  task builds or changes it (`draft` or `accepted`), or asks why something
+  was decided; a `done` RFC is not read for a task that only needs to know
+  how `codeagent` behaves.
 - When behaviour changes or a decision is made, update the spec file of that topic in the same change.
 - If the spec is unclear or contradicts itself, ask instead of guessing.
 - Update `readme.md` when commands, options, keys, configuration or the release

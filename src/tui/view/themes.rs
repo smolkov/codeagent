@@ -1,4 +1,4 @@
-//! The theme list (see `spec/tui.md`, "Theme list").
+//! The theme list (see `spec/tui-settings.md`, "Theme list").
 
 use ratatui::Frame;
 use ratatui::layout::Rect;

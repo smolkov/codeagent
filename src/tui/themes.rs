@@ -1,4 +1,4 @@
-//! The state of the theme list (see `spec/tui.md`, "Theme list"): every theme
+//! The state of the theme list (see `spec/tui-settings.md`, "Theme list"): every theme
 //! in groups, the filter and the selected row. `App` previews the selected
 //! theme and saves the one taken; `view::themes` draws it.
 

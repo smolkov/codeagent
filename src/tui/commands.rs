@@ -1,5 +1,5 @@
 //! The `/` commands of the TUI and the search of the command list (see
-//! `spec/tui.md`, "Command list"). `App::command` runs them.
+//! `spec/tui-input.md`, "Command list"). `App::command` runs them.
 
 /// A row of the command list.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

@@ -1,0 +1,16 @@
+---
+source: src/tui/tests/sessions.rs
+expression: text
+---
+── Sessions ────────────────────────────────
+      NAME       MODEL             STATE    
+    ✓ project    anthropic/sonnet  working  
+▶     project-2  local/qwen        idle     
+      docs       anthropic/opus    ● waiting
+      old        anthropic/sonnet  saved    
+                                            
+                                            
+Enter attach ─ Space mark ─ d delete ─ / fi…
+────────────────────────────────────────────
+  idle · /help · Ctrl-D detach              
+  project · ~/ws/project · anthropic/sonnet…

@@ -170,7 +170,7 @@ active skills.
 
 - TUI: `/skills` opens the selection box, `/skills NAME` turns one skill on
   or off, and after `/skills ` the value list offers the found skills
-  ([`tui.md`](tui.md), "Skills"). A change shows the notice
+  ([`tui-boxes.md`](tui-boxes.md), "Skills"). A change shows the notice
   `skills: + release-check, − pdf`.
 - `codeagent chat`: `/skills` prints the skills, `/skills NAME` turns one on or
   off ([`command.md`](command.md), "codeagent chat").

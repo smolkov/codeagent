@@ -1,4 +1,4 @@
-//! The box of the session list (see `spec/tui.md`, "Sessions").
+//! The box of the session list (see `spec/tui-sessions.md`, "Sessions").
 
 use ratatui::Frame;
 use ratatui::layout::Rect;

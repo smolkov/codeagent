@@ -1,4 +1,4 @@
-//! The state of the activity line (see `spec/tui.md`, "Activity line",
+//! The state of the activity line (see `spec/tui-conversation.md`, "Activity line",
 //! `rfcs/0015-activity-line.md`): when the turn started, what the model
 //! does, the verb of the turn, the tokens and the animation frame. Pure: `App`
 //! feeds it events and frames, `view::activity` draws it.

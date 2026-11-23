@@ -1,4 +1,4 @@
-//! The details view (see `spec/tui.md`, "Details view"): the whole of a
+//! The details view (see `spec/tui-conversation.md`, "Details view"): the whole of a
 //! tool call, or the diffs of the last turn, over the conversation, to read,
 //! search and copy. `App` keeps it; `view::details` draws it.
 

@@ -1,4 +1,4 @@
-//! The box of `/lsp` (see `spec/tui.md`, "Language servers").
+//! The box of `/lsp` (see `spec/tui-boxes.md`, "Language servers").
 
 use ratatui::Frame;
 use ratatui::layout::Rect;

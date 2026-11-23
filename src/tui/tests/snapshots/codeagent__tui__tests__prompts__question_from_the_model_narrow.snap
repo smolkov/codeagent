@@ -1,0 +1,16 @@
+---
+source: src/tui/tests/prompts.rs
+expression: "screen(&mut app, 40, 12)"
+---
+▸ read src/parse.rs            ✓ 3 lines
+▾ ask_user Database, Features      ? ask
+── Question ─ 1/2 Database ─────────────
+                                        
+Which database should the cache use?    
+                                        
+▶ 1 SQLite (recommended)                
+Up Down choose ─ Enter next ─ Tab       
+question ─ Esc skip ─ Ctrl-C cancel turn
+────────────────────────────────────────
+  asking · /help · Ctrl-D detach        
+  project · ~/ws/project · anthropic/so…

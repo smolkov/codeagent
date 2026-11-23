@@ -1,4 +1,4 @@
-//! The command list, over the last rows of the conversation (see `spec/tui.md`,
+//! The command list, over the last rows of the conversation (see `spec/tui-input.md`,
 //! "Command list").
 
 use ratatui::Frame;

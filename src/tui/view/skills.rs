@@ -1,4 +1,4 @@
-//! The skills box (see `spec/tui.md`, "Skills").
+//! The skills box (see `spec/tui-boxes.md`, "Skills").
 
 use std::path::Path;
 

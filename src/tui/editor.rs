@@ -41,7 +41,7 @@ pub struct Marked {
     pub width: usize,
 }
 
-/// An editing key (see `spec/tui.md`, "Input editor").
+/// An editing key (see `spec/tui-input.md`, "Input editor").
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Edit {
     Char(char),

@@ -19,7 +19,7 @@ pub enum Symbols {
 }
 
 /// `tui.activity`: the activity line while the session works (see
-/// `spec/tui.md`, "Activity line").
+/// `spec/tui-conversation.md`, "Activity line").
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum ActivityLine {
@@ -33,7 +33,7 @@ pub enum ActivityLine {
 }
 
 /// `tui.tool_preview`: what finished tool calls show below their summary
-/// (see `spec/tui.md`, "Conversation entries").
+/// (see `spec/tui-conversation.md`, "Conversation entries").
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum ToolPreview {
@@ -57,7 +57,7 @@ impl ToolPreview {
 }
 
 /// `tui.clipboard`: how copied text reaches the clipboard (see
-/// `spec/tui.md`, "Copy").
+/// `spec/tui-conversation.md`, "Copy").
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Clipboard {
@@ -93,6 +93,10 @@ pub struct Tui {
     pub tool_output_lines: u32,
     /// `tool_preview`; `expand_tool_calls = true` reads as `all`.
     pub tool_preview: ToolPreview,
+    /// `group_tools`: finished calls of the same tool in a row as one line.
+    pub group_tools: bool,
+    /// `group_tools_min`: the fewest calls that form a group, 2–100.
+    pub group_tools_min: u8,
     pub clipboard: Clipboard,
     pub syntax_highlight: bool,
     pub timestamps: bool,
@@ -109,6 +113,8 @@ impl Default for Tui {
             mouse: true,
             tool_output_lines: 20,
             tool_preview: ToolPreview::Changes,
+            group_tools: true,
+            group_tools_min: 2,
             clipboard: Clipboard::Auto,
             syntax_highlight: true,
             timestamps: false,
@@ -380,6 +386,7 @@ pub(crate) fn build_tui(
         (None, Some(true)) => ToolPreview::All,
         (None, _) => tui.tool_preview,
     };
+    tui.group_tools = file.group_tools.unwrap_or(tui.group_tools);
     tui.clipboard = file.clipboard.unwrap_or(tui.clipboard);
     tui.syntax_highlight = file.syntax_highlight.unwrap_or(tui.syntax_highlight);
     tui.timestamps = file.timestamps.unwrap_or(tui.timestamps);
@@ -400,6 +407,9 @@ pub(crate) fn build_tui(
     };
     if let Some(n) = int(&file.tool_output_lines, "tool_output_lines", 0..=1_000_000) {
         tui.tool_output_lines = u32::try_from(n).unwrap_or(tui.tool_output_lines);
+    }
+    if let Some(n) = int(&file.group_tools_min, "group_tools_min", 2..=100) {
+        tui.group_tools_min = u8::try_from(n).unwrap_or(tui.group_tools_min);
     }
     if let Some(n) = int(&file.scroll_lines, "scroll_lines", 1..=1000) {
         tui.scroll_lines = u16::try_from(n).unwrap_or(tui.scroll_lines);

@@ -1,4 +1,4 @@
-//! The state of the skills box (see `spec/tui.md`, "Skills"): the skills of
+//! The state of the skills box (see `spec/tui-boxes.md`, "Skills"): the skills of
 //! the workspace from the server, the ticks, the filter and the selected
 //! row. `App` routes keys here; `view::skills` draws it.
 

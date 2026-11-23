@@ -1,4 +1,4 @@
-//! The box of the model picker (see `spec/tui.md`, "Model picker").
+//! The box of the model picker (see `spec/tui-boxes.md`, "Model picker").
 
 use ratatui::Frame;
 use ratatui::layout::Rect;

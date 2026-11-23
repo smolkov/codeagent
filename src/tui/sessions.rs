@@ -1,4 +1,4 @@
-//! The state of the session list (see `spec/tui.md`, "Sessions"): the sessions
+//! The state of the session list (see `spec/tui-sessions.md`, "Sessions"): the sessions
 //! from the server's last `list`, the selected row, the marks, the filter and
 //! what the box asks for. `App` routes keys here and carries out what comes
 //! back; `view::sessions` draws it.

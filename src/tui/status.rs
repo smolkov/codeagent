@@ -1,4 +1,4 @@
-//! The state of the status box (see `spec/tui.md`, "Status box"): its two
+//! The state of the status box (see `spec/tui-status.md`, "Status box"): its two
 //! tabs, the last `session_status` answer, the `global_stats` answers by
 //! range, the scroll positions, and whether to ask again. `App` asks;
 //! `view::status_box` draws it.

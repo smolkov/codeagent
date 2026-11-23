@@ -1,5 +1,5 @@
 //! The chart of tokens per day on the Global tab of the status box (see
-//! `spec/tui.md`, "Global tab"): one column per day, input and output
+//! `spec/tui-status.md`, "Global tab"): one column per day, input and output
 //! stacked, with a y axis. Pure on its input. ratatui's `BarChart` neither
 //! stacks two series nor draws a y axis, so the cells are drawn here.
 

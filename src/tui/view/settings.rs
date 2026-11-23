@@ -1,4 +1,4 @@
-//! The settings box (see `spec/tui.md`, "Settings").
+//! The settings box (see `spec/tui-settings.md`, "Settings").
 
 use ratatui::Frame;
 use ratatui::layout::Rect;

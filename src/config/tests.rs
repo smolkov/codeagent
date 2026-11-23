@@ -884,6 +884,22 @@ fn tool_preview_clipboard_and_the_old_key() {
 }
 
 #[test]
+fn group_tools_and_its_minimum() {
+    let tui = |text: &str| ok(&with(&format!("[tui]\n{text}"))).tui;
+    assert!(tui("").group_tools);
+    assert_eq!(tui("").group_tools_min, 2);
+    assert!(!tui("group_tools = false").group_tools);
+    assert_eq!(tui("group_tools_min = 100").group_tools_min, 100);
+    for n in ["1", "101"] {
+        let e = errs(&with(&format!("[tui]\ngroup_tools_min = {n}\n")), None);
+        assert!(
+            e[0].contains(&format!("tui.group_tools_min: {n} is not in 2–100")),
+            "{e:?}"
+        );
+    }
+}
+
+#[test]
 fn tui_errors() {
     let e = errs(
         &with(

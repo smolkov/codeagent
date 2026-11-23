@@ -1,5 +1,5 @@
 //! The activity line above the input while the session works (see
-//! `spec/tui.md`, "Activity line"):
+//! `spec/tui-conversation.md`, "Activity line"):
 //! `✻ Prestidigitating… (14s · ↓ 1.2k tokens · Esc cancel)`.
 
 use ratatui::buffer::Buffer;

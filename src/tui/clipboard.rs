@@ -1,4 +1,4 @@
-//! Copied text to the clipboard (see `spec/tui.md`, "Copy"): the terminal's
+//! Copied text to the clipboard (see `spec/tui-conversation.md`, "Copy"): the terminal's
 //! OSC 52 sequence, which also works over SSH, and a clipboard command
 //! (`wl-copy`, `xclip`, `xsel`, `pbcopy`) when the session is local. No
 //! crate: OSC 52 is one escape sequence, and the commands are processes.

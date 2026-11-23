@@ -1,4 +1,4 @@
-//! The state of the settings box (see `spec/tui.md`, "Settings"): the `[tui]`
+//! The state of the settings box (see `spec/tui-settings.md`, "Settings"): the `[tui]`
 //! keys as the user file has them, the values shown and applied, and what is
 //! being edited. `App` previews `current` and saves the changes; `view::settings`
 //! draws it.
@@ -46,7 +46,7 @@ const fn row(key: &'static str, description: &'static str, help: &'static str, k
 }
 
 /// The keys of `[tui]`, in the order of `spec/config.md`, "TUI".
-pub fn rows() -> [Row; 11] {
+pub fn rows() -> [Row; 13] {
     [
         row(
             "theme",
@@ -77,6 +77,18 @@ pub fn rows() -> [Row; 11] {
             "What finished tool calls show",
             "changes: diffs and command output; all: every call expanded; none: one line",
             Kind::Choice(&["changes", "all", "none"]),
+        ),
+        row(
+            "group_tools",
+            "Group calls of the same tool",
+            "on: finished calls of one tool in a row show as one line, e.g. Ran 5 commands; a click opens it",
+            Kind::OnOff,
+        ),
+        row(
+            "group_tools_min",
+            "Fewest calls that form a group",
+            "2 to 100",
+            Kind::Number(2..=100),
         ),
         row(
             "clipboard",
@@ -141,6 +153,8 @@ pub fn get(tui: &Tui, key: &str) -> Setting {
         "mouse" => Setting::Bool(tui.mouse),
         "tool_output_lines" => Setting::Int(i64::from(tui.tool_output_lines)),
         "tool_preview" => Setting::Text(tui.tool_preview.name().to_owned()),
+        "group_tools" => Setting::Bool(tui.group_tools),
+        "group_tools_min" => Setting::Int(i64::from(tui.group_tools_min)),
         "clipboard" => Setting::Text(tui.clipboard.name().to_owned()),
         "syntax_highlight" => Setting::Bool(tui.syntax_highlight),
         "timestamps" => Setting::Bool(tui.timestamps),
@@ -183,6 +197,10 @@ pub fn set(tui: &mut Tui, key: &str, value: &Setting) {
                 "off" => Clipboard::Off,
                 _ => Clipboard::Auto,
             };
+        }
+        ("group_tools", Setting::Bool(b)) => tui.group_tools = *b,
+        ("group_tools_min", Setting::Int(n)) => {
+            tui.group_tools_min = u8::try_from(*n).unwrap_or(tui.group_tools_min);
         }
         ("syntax_highlight", Setting::Bool(b)) => tui.syntax_highlight = *b,
         ("timestamps", Setting::Bool(b)) => tui.timestamps = *b,
@@ -680,8 +698,8 @@ mod tests {
         assert_eq!(
             shown,
             [
-                "terminal", "auto", "on", "20", "changes", "auto", "on", "off", "3", "30",
-                "playful"
+                "terminal", "auto", "on", "20", "changes", "on", "2", "auto", "on", "off", "3",
+                "30", "playful"
             ]
         );
         let mut tui = Tui::default();

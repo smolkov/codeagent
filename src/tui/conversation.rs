@@ -3,7 +3,7 @@
 //! resize clears only what it has to, so that long sessions scroll without
 //! reflowing everything.
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use ratatui::style::{Modifier, Style};
 use ratatui::text::{Line, Span};
@@ -30,6 +30,10 @@ const SHORT_RESULT: usize = 24;
 const ANSWER_INDENT: usize = 2;
 /// The last lines of a command's output in its preview.
 const COMMAND_TAIL: usize = 6;
+/// Cells the calls of an open group are indented by.
+const GROUP_INDENT: usize = 2;
+/// Tools whose calls are never grouped: their diff or question is the point.
+const UNGROUPED: [&str; 4] = ["edit_file", "write_file", "ask_user", "report"];
 
 /// A drawn row and where it comes from.
 pub type Drawn = (Line<'static>, Source);
@@ -45,6 +49,35 @@ pub enum Expansion {
     Expanded,
     /// With the whole result.
     Full,
+}
+
+/// What the user chose to show of the calls and groups of a session:
+/// kept while the TUI shows another session.
+#[derive(Debug, Clone, Default, PartialEq)]
+pub struct Choices {
+    /// By call id.
+    pub expanded: HashMap<String, Expansion>,
+    /// The open groups, by the id of their first call.
+    pub groups: HashSet<String>,
+}
+
+/// Where an entry stands in a group of calls (RFC 0043).
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum Place {
+    /// The first call: it draws the group's line, then itself when open.
+    Head { open: bool, tally: Tally },
+    /// Another call of the group: nothing when closed.
+    Inside { open: bool },
+}
+
+/// What a group's line says.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+struct Tally {
+    name: String,
+    calls: usize,
+    failed: usize,
+    denied: usize,
+    cancelled: usize,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -87,6 +120,8 @@ pub struct Row<'a> {
     pub entry: Option<usize>,
     /// Whether it is the first row of the entry (not the gap before it).
     pub first: bool,
+    /// The row within the entry; 0 for the first row and for a gap.
+    pub offset: usize,
     pub line: Option<&'a Line<'static>>,
     pub source: Option<&'a Source>,
 }
@@ -105,6 +140,12 @@ pub struct Conversation {
     preview: ToolPreview,
     /// What the user chose, by call id; survives a re-attach.
     expanded: HashMap<String, Expansion>,
+    /// The groups the user opened, by their first call's id.
+    open_groups: HashSet<String>,
+    /// `tui.group_tools_min` when `tui.group_tools` is on.
+    group_min: Option<usize>,
+    /// The place of each entry in a group, from the last layout.
+    places: Vec<Option<Place>>,
     /// Entries of tool calls by call id.
     calls: HashMap<String, usize>,
     /// The text entry deltas go to.
@@ -127,6 +168,9 @@ impl Conversation {
             limit,
             preview,
             expanded: HashMap::new(),
+            open_groups: HashSet::new(),
+            group_min: None,
+            places: Vec::new(),
             calls: HashMap::new(),
             open_text: None,
             spinner: 0,
@@ -144,6 +188,16 @@ impl Conversation {
         self.calls.clear();
         self.open_text = None;
         self.tops.clear();
+        self.places.clear();
+    }
+
+    /// `tui.group_tools` and `tui.group_tools_min`: `None` shows every call
+    /// on its own.
+    pub fn set_grouping(&mut self, min: Option<usize>) {
+        if min != self.group_min {
+            self.group_min = min;
+            self.regroup();
+        }
     }
 
     /// New settings: every entry is laid out again with them. What the user
@@ -159,16 +213,23 @@ impl Conversation {
 
     /// What the user chose to expand, and the queued messages: the part of a
     /// session's view kept while the TUI shows another session.
-    pub fn take_choices(&mut self) -> (HashMap<String, Expansion>, Vec<String>) {
-        (
-            std::mem::take(&mut self.expanded),
-            std::mem::take(&mut self.queued),
-        )
+    pub fn take_choices(&mut self) -> (Choices, Vec<String>) {
+        let choices = Choices {
+            expanded: std::mem::take(&mut self.expanded),
+            groups: std::mem::take(&mut self.open_groups),
+        };
+        self.regroup();
+        (choices, std::mem::take(&mut self.queued))
     }
 
-    pub fn set_choices(&mut self, expanded: HashMap<String, Expansion>, queued: Vec<String>) {
-        self.expanded = expanded;
+    pub fn set_choices(&mut self, choices: Choices, queued: Vec<String>) {
+        self.expanded = choices.expanded;
+        self.open_groups = choices.groups;
         self.queued = queued;
+        for entry in &mut self.entries {
+            entry.cache = None;
+        }
+        self.regroup();
     }
 
     fn push(&mut self, kind: Kind) {
@@ -178,6 +239,7 @@ impl Conversation {
             stamp: self.stamp.clone(),
             cache: None,
         });
+        self.regroup_at(self.entries.len().saturating_sub(1));
     }
 
     pub fn notice(&mut self, text: impl Into<String>) {
@@ -266,6 +328,7 @@ impl Conversation {
         let Kind::Call(call) = &mut entry.kind else {
             return;
         };
+        let moved = call.state != event.state;
         call.state = event.state;
         if event.summary.is_some() {
             call.summary.clone_from(&event.summary);
@@ -283,6 +346,9 @@ impl Conversation {
         }
         if let Some(details) = &event.details {
             call.details = Some((**details).clone());
+        }
+        if moved && let Some(at) = self.calls.get(&event.id).copied() {
+            self.regroup_at(at);
         }
     }
 
@@ -360,6 +426,198 @@ impl Conversation {
         any
     }
 
+    /// Works out the groups again after a change of the entries, of an open
+    /// group or of the settings; entries whose place changed are laid out
+    /// again.
+    fn regroup(&mut self) {
+        self.regroup_in(0..self.entries.len());
+    }
+
+    /// [`Conversation::regroup`] for a change of entry `at` only: groups
+    /// never reach past the calls in a row around it.
+    fn regroup_at(&mut self, at: usize) {
+        let is_call =
+            |i: usize| matches!(self.entries.get(i).map(|e| &e.kind), Some(Kind::Call(_)));
+        let mut start = at;
+        while start > 0 && is_call(start - 1) {
+            start -= 1;
+        }
+        let mut end = at + 1;
+        while is_call(end) {
+            end += 1;
+        }
+        self.regroup_in(start..end.min(self.entries.len()));
+    }
+
+    fn regroup_in(&mut self, range: std::ops::Range<usize>) {
+        self.places.resize(self.entries.len(), None);
+        let start = range.start;
+        let places = self.group_places(range);
+        for (i, place) in (start..).zip(places) {
+            if let Some(old) = self.places.get_mut(i)
+                && *old != place
+            {
+                *old = place;
+                if let Some(entry) = self.entries.get_mut(i) {
+                    entry.cache = None;
+                }
+            }
+        }
+    }
+
+    /// The tool of entry `i` if it is a call that may join a group: a
+    /// finished call of a tool that is not in [`UNGROUPED`].
+    fn groupable(&self, i: usize) -> Option<&str> {
+        match &self.entries.get(i)?.kind {
+            Kind::Call(call)
+                if matches!(
+                    call.state,
+                    CallState::Done | CallState::Error | CallState::Denied | CallState::Cancelled
+                ) && !UNGROUPED.contains(&call.name.as_str()) =>
+            {
+                Some(call.name.as_str())
+            }
+            _ => None,
+        }
+    }
+
+    /// The groups of the entries (RFC 0043): runs of at least `group_min`
+    /// groupable calls of one tool with nothing between them.
+    fn group_places(&self, range: std::ops::Range<usize>) -> Vec<Option<Place>> {
+        let start = range.start;
+        let mut places = vec![None; range.len()];
+        let Some(min) = self.group_min else {
+            return places;
+        };
+        let mut i = start;
+        while i < range.end {
+            let Some(name) = self.groupable(i) else {
+                i += 1;
+                continue;
+            };
+            let mut end = i + 1;
+            while end < range.end && self.groupable(end) == Some(name) {
+                end += 1;
+            }
+            if end - i >= min.max(2) {
+                let open = self
+                    .call(i)
+                    .is_some_and(|c| self.open_groups.contains(&c.id));
+                let mut tally = Tally {
+                    name: name.to_owned(),
+                    calls: end - i,
+                    ..Tally::default()
+                };
+                for call in (i..end).filter_map(|j| self.call(j)) {
+                    match call.state {
+                        CallState::Error => tally.failed += 1,
+                        CallState::Denied => tally.denied += 1,
+                        CallState::Cancelled => tally.cancelled += 1,
+                        _ => {}
+                    }
+                }
+                if let Some(place) = places.get_mut(i - start) {
+                    *place = Some(Place::Head { open, tally });
+                }
+                for place in places.iter_mut().take(end - start).skip(i + 1 - start) {
+                    *place = Some(Place::Inside { open });
+                }
+            }
+            i = end;
+        }
+        places
+    }
+
+    fn place(&self, entry: usize) -> Option<&Place> {
+        self.places.get(entry).and_then(Option::as_ref)
+    }
+
+    /// Whether the entry is the first call of a group: its first row is the
+    /// group's line.
+    pub fn is_group(&self, entry: usize) -> bool {
+        matches!(self.place(entry), Some(Place::Head { .. }))
+    }
+
+    /// Whether the entry is a call hidden in a closed group.
+    pub fn is_hidden(&self, entry: usize) -> bool {
+        matches!(self.place(entry), Some(Place::Inside { open: false }))
+    }
+
+    /// The row of an entry that is its call's summary: below the group's
+    /// line for the first call of a group.
+    pub fn summary_offset(&self, entry: usize) -> usize {
+        usize::from(self.is_group(entry))
+    }
+
+    /// The first call of the closed group the entry is hidden in; the entry
+    /// itself when it has rows.
+    pub fn shown_entry(&self, entry: usize) -> usize {
+        if !self.is_hidden(entry) {
+            return entry;
+        }
+        let mut at = entry;
+        while self.is_hidden(at) && at > 0 {
+            at -= 1;
+        }
+        if self.is_group(at) { at } else { entry }
+    }
+
+    /// The entry before `entry` that has rows, for `Up`.
+    pub fn previous_shown(&self, entry: usize) -> usize {
+        let mut at = entry;
+        while at > 0 {
+            at -= 1;
+            if !self.is_hidden(at) {
+                return at;
+            }
+        }
+        entry
+    }
+
+    /// The entry after `entry` that has rows, for `Down`.
+    pub fn next_shown(&self, entry: usize) -> usize {
+        ((entry + 1)..self.entries.len())
+            .find(|i| !self.is_hidden(*i))
+            .unwrap_or(entry)
+    }
+
+    /// Opens or closes the group whose first call is `entry`; `false` if it
+    /// is none.
+    pub fn toggle_group(&mut self, entry: usize) -> bool {
+        if !self.is_group(entry) {
+            return false;
+        }
+        let Some(id) = self.call(entry).map(|c| c.id.clone()) else {
+            return false;
+        };
+        if !self.open_groups.remove(&id) {
+            self.open_groups.insert(id);
+        }
+        self.regroup_at(entry);
+        true
+    }
+
+    /// The commands or paths of a closed group's calls, one per line.
+    fn group_text(&self, entry: usize) -> Option<String> {
+        if !matches!(self.place(entry), Some(Place::Head { open: false, .. })) {
+            return None;
+        }
+        let mut lines = Vec::new();
+        let mut at = entry;
+        while let Some(call) = self.call(at) {
+            if at != entry && !matches!(self.place(at), Some(Place::Inside { .. })) {
+                break;
+            }
+            lines.push(
+                command_of(call)
+                    .or_else(|| call.summary.clone())
+                    .unwrap_or_else(|| main_argument(&call.arguments)),
+            );
+            at += 1;
+        }
+        Some(lines.join("\n"))
+    }
+
     fn render(&self) -> Render<'_> {
         Render {
             look: &self.look,
@@ -374,6 +632,10 @@ impl Conversation {
     /// collapsed; a preview goes to expanded. `false` if the entry is no
     /// tool call.
     pub fn toggle(&mut self, entry: usize) -> bool {
+        let entry = self.shown_entry(entry);
+        if self.toggle_group(entry) {
+            return true;
+        }
         let Some(Entry {
             kind: Kind::Call(call),
             ..
@@ -452,19 +714,30 @@ impl Conversation {
     /// more than its summary, else they show their preview (or expand when
     /// they have none). `false` without calls.
     pub fn toggle_last_turn(&mut self) -> bool {
-        let calls: Vec<usize> = self
+        let all: Vec<usize> = self
             .last_turn()
             .filter(|i| matches!(self.entries.get(*i).map(|e| &e.kind), Some(Kind::Call(_))))
             .collect();
-        if calls.is_empty() {
+        if all.is_empty() {
             return false;
         }
+        // Groups open and close as a whole; the calls in them keep what the
+        // user chose.
+        let heads: Vec<String> = all
+            .iter()
+            .filter(|i| self.is_group(**i))
+            .filter_map(|i| self.call(*i).map(|c| c.id.clone()))
+            .collect();
+        let calls: Vec<usize> = all
+            .into_iter()
+            .filter(|i| self.place(*i).is_none())
+            .collect();
         let render = self.render();
         let shown = |i: &usize| match self.entries.get(*i).map(|e| &e.kind) {
             Some(Kind::Call(call)) => render.expansion(call) != Expansion::Collapsed,
             _ => false,
         };
-        let open = calls.iter().any(shown);
+        let open = calls.iter().any(shown) || heads.iter().any(|id| self.open_groups.contains(id));
         let wanted: Vec<(usize, Expansion)> = calls
             .iter()
             .map(|i| {
@@ -479,11 +752,22 @@ impl Conversation {
         for (i, next) in wanted {
             self.choose(i, next);
         }
+        for id in heads {
+            if open {
+                self.open_groups.remove(&id);
+            } else {
+                self.open_groups.insert(id);
+            }
+        }
+        self.regroup();
         true
     }
 
-    /// The text `y` copies of an entry (see `spec/tui.md`, "Copy").
+    /// The text `y` copies of an entry (see `spec/tui-conversation.md`, "Copy").
     pub fn entry_text(&self, entry: usize) -> Option<String> {
+        if let Some(text) = self.group_text(entry) {
+            return Some(text);
+        }
         Some(match &self.entries.get(entry)?.kind {
             Kind::User(text) | Kind::Text(text) | Kind::Notice(text) | Kind::Error(text) => {
                 text.clone()
@@ -537,6 +821,10 @@ impl Conversation {
 
     /// The details view of a call: its summary as the title, and all of it.
     pub fn details(&self, entry: usize) -> Option<super::details::Details> {
+        // A closed group shows no call to open.
+        if matches!(self.place(entry), Some(Place::Head { open: false, .. })) {
+            return None;
+        }
         let call = self.call(entry)?;
         let render = self.render();
         let (mark, _) = render.state_mark(call);
@@ -631,7 +919,7 @@ impl Conversation {
                 .iter()
                 .enumerate()
                 .filter(|(_, e)| e.cache.is_none())
-                .map(|(i, e)| (i, render.entry(e, width)))
+                .map(|(i, e)| (i, render.entry(e, self.place(i), width)))
                 .collect()
         };
         for (i, lines) in built {
@@ -705,6 +993,7 @@ impl Conversation {
                 rows.push(Row {
                     entry: None,
                     first: false,
+                    offset: 0,
                     line: queued.map(|(l, _)| l),
                     source: queued.map(|(_, s)| s),
                 });
@@ -723,6 +1012,7 @@ impl Conversation {
             rows.push(Row {
                 entry: Some(i),
                 first: row == start,
+                offset: row.saturating_sub(start),
                 line: drawn.map(|(l, _)| l),
                 source: drawn.map(|(_, s)| s),
             });
@@ -774,16 +1064,28 @@ impl Render<'_> {
         self.limit > 0 && call.state != CallState::Waiting && self.body(call).len() > self.limit
     }
 
-    fn entry(&self, entry: &Entry, width: usize) -> Vec<Drawn> {
+    fn entry(&self, entry: &Entry, place: Option<&Place>, width: usize) -> Vec<Drawn> {
         let inner = if entry.stamp.is_some() {
             width.saturating_sub(STAMP)
         } else {
             width
         };
+        let nested = inner.saturating_sub(GROUP_INDENT);
         let mut lines = match &entry.kind {
             Kind::User(text) => self.user(text, inner),
             Kind::Text(text) => self.answer(text, inner),
-            Kind::Call(call) => self.call(call, inner),
+            Kind::Call(call) => match place {
+                None => self.call(call, inner),
+                Some(Place::Inside { open: false }) => Vec::new(),
+                Some(Place::Inside { open: true }) => indented(self.call(call, nested)),
+                Some(Place::Head { open, tally }) => {
+                    let mut lines = vec![self.group_line(tally, *open, inner)];
+                    if *open {
+                        lines.extend(indented(self.call(call, nested)));
+                    }
+                    lines
+                }
+            },
             Kind::Notice(text) => plain_rows(text, inner, self.look.styles.dim),
             Kind::Error(text) => plain_rows(text, inner, self.look.styles.error),
         };
@@ -964,6 +1266,38 @@ impl Render<'_> {
                 },
                 styles.text,
             ),
+            Span::raw(" ".repeat(pad)),
+            Span::styled(mark, style),
+        ]);
+        (line, source)
+    }
+
+    /// `▸ Ran 5 commands                         ✓ 5 ok`
+    fn group_line(&self, tally: &Tally, open: bool, width: usize) -> Drawn {
+        let symbols = &self.look.symbols;
+        let styles = &self.look.styles;
+        let marker = if open {
+            symbols.expanded
+        } else {
+            symbols.collapsed
+        };
+        let (mark, style) = group_mark(tally, symbols, styles);
+        let mark = fit(&mark, width / 2, symbols.more);
+        let head = marker.width() + 1;
+        let text = fit(
+            &group_title(tally),
+            width.saturating_sub(head + mark.width() + 1),
+            symbols.more,
+        );
+        let left = head + text.width();
+        let pad = width.saturating_sub(left + mark.width()).max(1);
+        let source = Source {
+            end: left,
+            ..Source::text(head)
+        };
+        let line = Line::from(vec![
+            Span::styled(format!("{marker} "), styles.dim),
+            Span::styled(text, styles.text.add_modifier(Modifier::BOLD)),
             Span::raw(" ".repeat(pad)),
             Span::styled(mark, style),
         ]);
@@ -1292,6 +1626,63 @@ impl Render<'_> {
             None => lines_into(out, &format!("$ {command}"), styles.text),
         }
     }
+}
+
+/// The rows of a call inside an open group, two columns in.
+fn indented(mut lines: Vec<Drawn>) -> Vec<Drawn> {
+    for (line, source) in &mut lines {
+        line.spans.insert(0, Span::raw(" ".repeat(GROUP_INDENT)));
+        source.prefix += GROUP_INDENT;
+        source.end = source.end.saturating_add(GROUP_INDENT);
+    }
+    lines
+}
+
+/// `Ran 5 commands`, `Read 3 files`.
+fn group_title(tally: &Tally) -> String {
+    let n = group(tally.calls);
+    match tally.name.as_str() {
+        "run_command" => format!("Ran {n} commands"),
+        "read_file" => format!("Read {n} files"),
+        "list_files" => format!("Listed {n} directories"),
+        "search_files" => format!("Searched {n} times"),
+        "lsp" => format!("{n} lsp queries"),
+        name => format!("{n} {} calls", label(name)),
+    }
+}
+
+/// `✓ 5 ok`, or what is not ok: `✗ 1 failed, ⊘ 2 denied`.
+fn group_mark(
+    tally: &Tally,
+    symbols: &super::style::Symbols,
+    styles: &super::style::Styles,
+) -> (String, Style) {
+    let mut parts = Vec::new();
+    if tally.failed > 0 {
+        parts.push(format!("{} {} failed", symbols.failed, group(tally.failed)));
+    }
+    if tally.denied > 0 {
+        parts.push(format!("{} {} denied", symbols.denied, group(tally.denied)));
+    }
+    if tally.cancelled > 0 {
+        parts.push(format!(
+            "{} {} cancelled",
+            symbols.denied,
+            group(tally.cancelled)
+        ));
+    }
+    if parts.is_empty() {
+        return (
+            format!("{} {} ok", symbols.done, group(tally.calls)),
+            styles.success,
+        );
+    }
+    let style = if tally.failed > 0 {
+        styles.error
+    } else {
+        styles.warning
+    };
+    (parts.join(", "), style)
 }
 
 fn lines_into(out: &mut Vec<Vec<Piece>>, text: &str, style: Style) {

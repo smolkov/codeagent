@@ -1,4 +1,4 @@
-//! The details view (see `spec/tui.md`, "Details view"): a box over the
+//! The details view (see `spec/tui-conversation.md`, "Details view"): a box over the
 //! conversation with all of a call, the search line or the keys under it.
 
 use ratatui::Frame;

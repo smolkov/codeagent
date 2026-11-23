@@ -83,7 +83,7 @@ Statements marked **(assumption)** need a decision from the user.
   other sessions go on. Resuming it closes the turn that failed.
 - Each session keeps its own history, provider and model, allow rules and
   limits. The provider and model can be changed at any time from the TUI
-  (see `spec/tui.md`, "Model picker"). Allow
+  (see `spec/tui-boxes.md`, "Model picker"). Allow
   rules granted in one session never apply to another.
 
 ## Scratch directory
@@ -147,7 +147,7 @@ decision is needed.
 - A session never waits for anything else: not for a TUI to attach, not for
   a TUI to show its output, not for errors to be confirmed. Everything that
   happened while no TUI was attached is shown on the next attach (see
-  [`tui.md`](tui.md), "Switching sessions").
+  [`tui-sessions.md`](tui-sessions.md), "Switching sessions").
 - While a session works, its TUI stays usable: the user can type and queue
   messages, switch sessions or detach.
 - A one-shot `codeagent run` asks on the terminal when standard input is one.
@@ -288,7 +288,7 @@ call fails (see [`tools.md`](tools.md), "edit_file").
 
 | Client | Shows a question as | Answers with |
 |--------|---------------------|--------------|
-| TUI | Expanded tool call and prompt bar (see [`tui.md`](tui.md), "Permission prompts"); a question from the model as a box ("Questions from the model"). | Keys `y`, `a`, `n`, `e`, `Esc`; in the box, the option keys. |
+| TUI | Expanded tool call and prompt bar (see [`tui-questions.md`](tui-questions.md), "Permission prompts"); a question from the model as a box ("Questions from the model"). | Keys `y`, `a`, `n`, `e`, `Esc`; in the box, the option keys. |
 | Terminal: `codeagent chat` | In the conversation with the session, or alone with `--questions`: the fields as text, the diff or command, and a numbered list of choices (see [`command.md`](command.md)); a question from the model one question after another with numbered options. | A line on standard input, or options for scripts. |
 | Terminal: `codeagent run` | The same text on standard error, when standard input is a terminal. | A line on standard input. |
 | Web UI (later) | A page with the same fields. | The same answers. |

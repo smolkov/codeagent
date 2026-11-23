@@ -1,4 +1,4 @@
-//! Text selected with the mouse (see `spec/tui.md`, "Copy"): in the
+//! Text selected with the mouse (see `spec/tui-conversation.md`, "Copy"): in the
 //! conversation or in the details view, by row and cell. Rows count from the
 //! start of what is selected in, not from the screen, so that scrolling
 //! keeps the selection on its text.

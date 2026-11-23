@@ -1,4 +1,4 @@
-//! The state of the model picker (see `spec/tui.md`, "Model picker"): the
+//! The state of the model picker (see `spec/tui-boxes.md`, "Model picker"): the
 //! models from the server, the filter and the selected row. `App` routes keys
 //! here; `view::picker` draws it.
 

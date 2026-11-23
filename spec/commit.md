@@ -4,7 +4,7 @@
 `-a`, for all changes of tracked files) and prints it on standard output; it
 commits nothing (see
 [`command.md`](command.md), "codeagent commit"). The TUI command `/commit`
-(later version, see [`tui.md`](tui.md), "Commit") stages the workspace's
+(later version, see [`tui-input.md`](tui-input.md), "Commit") stages the workspace's
 changes first and then writes its message the same way.
 
 ```sh

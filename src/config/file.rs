@@ -195,6 +195,8 @@ pub struct TuiFile {
     /// Deprecated: `tool_preview`.
     pub expand_tool_calls: Option<bool>,
     pub tool_preview: Option<ToolPreview>,
+    pub group_tools: Option<bool>,
+    pub group_tools_min: Option<Spanned<i64>>,
     pub clipboard: Option<Clipboard>,
     pub syntax_highlight: Option<bool>,
     pub timestamps: Option<bool>,

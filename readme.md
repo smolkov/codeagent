@@ -178,7 +178,9 @@ size nor a bill.
 Without a terminal the TUI exits with `2`; use `codeagent run` or `codeagent chat`.
 `[tui]` in the configuration has `symbols`, `mouse` (off: the terminal's own
 text selection works), `tool_output_lines`, `tool_preview` (`changes`: diffs and
-the end of command output under finished calls; `all`; `none`), `clipboard`
+the end of command output under finished calls; `all`; `none`), `group_tools`
+(on: finished calls of one tool in a row show as one line, `▸ Ran 5 commands`,
+which a click or `Enter` opens) with `group_tools_min` (2), `clipboard`
 (`auto`: OSC 52, plus `wl-copy` / `xclip` / `xsel` / `pbcopy` when local;
 `osc52`; `command`; `off`), `timestamps`, `scroll_lines`, `max_fps` and
 `activity`; `syntax_highlight` colours code blocks, diffs, new files and

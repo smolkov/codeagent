@@ -186,7 +186,7 @@ short and finish; their result is still recorded. **(assumption)**
 
 ### Display
 
-Each call is one line in the TUI conversation (see [`tui.md`](tui.md),
+Each call is one line in the TUI conversation (see [`tui-conversation.md`](tui-conversation.md),
 "Conversation entries"): marker, tool name, main argument, state. The
 "Shown" line of each tool below says what the main argument and the expanded
 details are.
@@ -457,7 +457,7 @@ Runs a shell command in the workspace and returns its output.
   test runners put their temporary files there.
 - The command runs in its own process group. On timeout or when the turn is
   cancelled, the group gets `SIGTERM`, and `SIGKILL` 2 s later (see
-  [`tui.md`](tui.md), "Cancellation and exit"). Background processes the
+  [`tui-conversation.md`](tui-conversation.md), "Cancellation and exit"). Background processes the
   command started are stopped with it.
 - When the shell exits, processes it left in the background get 0.5 s to
   finish writing output, then the whole group is stopped. So

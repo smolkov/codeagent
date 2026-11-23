@@ -8,7 +8,7 @@ use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 /// A piece of text in one style.
 pub type Piece = (String, Style);
 
-/// Where a drawn row comes from, for copying (see `spec/tui.md`, "Copy"):
+/// Where a drawn row comes from, for copying (see `spec/tui-conversation.md`, "Copy"):
 /// what of it is text, and whether it goes on the row above.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Source {

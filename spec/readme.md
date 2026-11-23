@@ -136,7 +136,14 @@ When a spec file is added, renamed or removed, update this table and
 | [`architecture.md`](architecture.md) | draft | Roles (client, server, one-shot), components and layers, project tree, state ownership, protocol messages and events, data flow of a turn, concurrency, trust boundaries, errors. |
 | [`security.md`](security.md) | draft | Threat model: assets, attackers, entry points and their guards, accepted risks, the checklist for new features, findings of the reviews. |
 | [`command.md`](command.md) | draft | All command-line commands: syntax, options, output, exit codes. |
-| [`tui.md`](tui.md) | draft | Full-screen interface: layout, session list, model picker, keys, permission prompts, input editor. |
+| [`tui.md`](tui.md) | draft | Full-screen interface: goals, layout, boxes, keys, performance; index of the TUI topic files below. |
+| [`tui-sessions.md`](tui-sessions.md) | draft | TUI: the session list (filter, delete) and switching sessions. |
+| [`tui-conversation.md`](tui-conversation.md) | draft | TUI: conversation entries, tool calls and groups, activity line, copy, images, details view, cancellation and exit. |
+| [`tui-questions.md`](tui-questions.md) | draft | TUI: permission prompts, the limit prompt, questions from the model. |
+| [`tui-input.md`](tui-input.md) | draft | TUI: the input editor, the command list, the commit dialog. |
+| [`tui-status.md`](tui-status.md) | draft | TUI: token counters, the status box and its global tab. |
+| [`tui-boxes.md`](tui-boxes.md) | draft | TUI: the model picker, the language server box, the skills box. |
+| [`tui-settings.md`](tui-settings.md) | draft | TUI: the settings box, the theme list, appearance and syntax highlighting. |
 | [`sessions.md`](sessions.md) | draft | Server, several sessions, attach/detach, session commands. |
 | [`commit.md`](commit.md) | draft | Commit messages: `codeagent commit` (staged changes, the agent file's rules, prints to stdout) and the TUI `/commit`. |
 | [`config.md`](config.md) | draft | Config files, precedence, providers and models, tool permissions, TUI settings and themes, validation, reloading. |
